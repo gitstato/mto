@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Handbook Ready — MTO Driver's Handbook Quiz</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Atkinson+Hyperlegible+Next:wght@500;700;800&display=swap');
+
+:root{
+  --bg: #FFFFFF;
+  --surface: #F5F7FA;
+  --surface-2: #EDF0F4;
+  --text: #16191D;
+  --text-soft: #3F4650;
+  --border: #C9D0DA;
+  --primary: #0B4F8A;
+  --primary-dark: #063861;
+  --success: #146C43;
+  --success-bg: #E6F4EA;
+  --error: #B3261E;
+  --error-bg: #FCEAE9;
+  --amber: #8A5A00;
+  --amber-bg: #FFF3DC;
+  --radius: 14px;
+  --font-scale: 1;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0; max-width:100%; overflow-x:hidden;}
+html{ font-size: calc(16px * var(--font-scale)); }
+body{
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', Arial, sans-serif;
+  min-height: 100vh;
+  padding: 18px 14px 48px;
+  line-height: 1.55;
+}
+.wrap{ max-width: 760px; margin: 0 auto; }
+img, svg{ max-width:100%; height:auto; }
+
+/* Hamburger menu button (fixed, always accessible) */
+.menu-btn{
+  position: fixed; top:16px; right:16px; z-index: 900;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  background: var(--bg); border:2px solid var(--border); border-radius: 10px;
+  width:48px; height:48px; cursor:pointer; font-family: inherit;
+}
+.menu-btn:hover, .menu-btn:focus-visible{ border-color: var(--primary); outline:none; }
+.menu-btn .bars{ display:flex; flex-direction:column; gap:4px; }
+.menu-btn .bars span{ width:20px; height:3px; background: var(--primary-dark); border-radius:2px; display:block; }
+
+/* Slide-in drawer */
+.drawer-overlay{
+  display:none; position:fixed; inset:0; background: rgba(20,25,32,0.5); z-index:1000;
+}
+.drawer-overlay.show{ display:block; }
+.drawer{
+  position:fixed; top:0; right:0; height:100%; width:320px; max-width:88vw;
+  background: var(--bg); border-left:2px solid var(--border);
+  transform: translateX(100%); transition: transform .22s ease;
+  z-index:1001; overflow-y:auto; padding: 20px;
+}
+.drawer-overlay.show .drawer{ transform: translateX(0); }
+.drawer-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.drawer-header h2{ font-size:1.2rem; font-weight:800; margin:0; }
+.drawer-close{
+  background: var(--surface); border:2px solid var(--border); border-radius:8px;
+  width:40px; height:40px; font-size:1.2rem; font-weight:800; cursor:pointer; color: var(--text);
+}
+.drawer-eyebrow{
+  font-size:0.8rem; font-weight:700; color: var(--primary);
+  text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;
+}
+.drawer-section{ margin-bottom: 22px; padding-bottom:18px; border-bottom: 2px solid var(--surface-2); }
+.drawer-section:last-child{ border-bottom:none; }
+.drawer-section h3{ font-size:0.95rem; font-weight:800; margin:0 0 8px; color: var(--primary-dark); }
+.drawer-section p{ color: var(--text-soft); font-size:0.95rem; line-height:1.6; margin:0 0 8px; }
+.drawer-progress-row{ display:flex; justify-content:space-between; font-size:0.95rem; font-weight:700; margin-bottom:8px; }
+.drawer-progress-track{
+  height:10px; border-radius:6px; background: var(--surface-2); border:2px solid var(--border);
+  overflow:hidden; margin-bottom:10px;
+}
+.drawer-progress-fill{ height:100%; background: var(--primary); }
+.drawer-cat-tag{
+  display:inline-block; font-size:0.8rem; font-weight:800; text-transform:uppercase;
+  letter-spacing:0.03em; padding:4px 10px; border-radius:16px; margin-bottom:8px; border:2px solid transparent;
+}
+.drawer-source{ color: var(--text-soft); font-size:0.85rem; font-weight:600; }
+.text-size-control{
+  display:flex; align-items:center; gap:6px;
+  background: var(--surface); border:2px solid var(--border);
+  border-radius: 10px; padding:8px;
+}
+.text-size-control span{ font-size:0.85rem; color: var(--text-soft); font-weight:700; white-space:nowrap; }
+.size-btn{
+  background: var(--bg); border:2px solid var(--border); border-radius:8px;
+  min-width:42px; height:42px; font-weight:800; cursor:pointer; color: var(--primary-dark);
+  font-family: inherit; font-size:0.95rem;
+}
+.size-btn:hover{ border-color: var(--primary); }
+.size-btn.active{ background: var(--primary); color:#fff; border-color: var(--primary); }
+
+.hero{ text-align:center; padding: 4px 0 20px; transition: none; }
+.hero.hidden{ display:none; }
+.hero.hidden + .card{ margin-top: 60px; }
+.hero .eyebrow{
+  font-size:0.85rem; font-weight:700; color: var(--primary);
+  text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;
+}
+.hero h1{
+  font-size: clamp(1.7rem, 8vw, 2.6rem);
+  font-weight:800; line-height:1.1; margin: 0 0 10px; color: var(--text);
+}
+.hero p{
+  color: var(--text-soft); font-size:1.02rem; max-width:520px; margin: 0 auto;
+}
+
+.card{
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius); padding: 22px; margin-top: 16px;
+}
+
+.setup h2{ font-size:1.4rem; font-weight:800; margin:0 0 6px; }
+.setup .sub{ color: var(--text-soft); font-size:1rem; margin-bottom:20px;}
+.modes{ display:grid; gap:12px; }
+.mode-btn{
+  display:flex; align-items:center; gap:14px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 12px; padding: 16px 18px;
+  color: var(--text); cursor:pointer; text-align:left;
+  font-family: inherit;
+  transition: border-color .15s ease;
+}
+.mode-btn:hover, .mode-btn:focus-visible{ border-color: var(--primary); outline: none; }
+.mode-icon{ width:44px; height:44px; flex:0 0 44px; font-size:26px; display:flex; align-items:center; justify-content:center; }
+.mode-title{ font-weight:800; font-size:1.05rem; margin-bottom:2px;}
+.mode-desc{ color: var(--text-soft); font-size:0.9rem; }
+.mode-all{ background: #E9F1FA; border-color: var(--primary); }
+
+.progress-row{
+  display:flex; align-items:center; justify-content:space-between; margin-bottom: 12px;
+  font-size:1rem; font-weight:700; color: var(--text-soft);
+}
+.progress-track{
+  position:relative; height:14px; border-radius:8px; background: var(--surface-2);
+  margin-bottom: 22px; overflow:hidden; border:2px solid var(--border);
+}
+.progress-fill{ position:absolute; top:0; left:0; height:100%; background: var(--primary); transition: width .35s ease; }
+
+.cat-tag{
+  display:inline-block; font-size:0.85rem; font-weight:800;
+  text-transform:uppercase; letter-spacing:0.04em; padding:5px 12px; border-radius:20px; margin-bottom:8px;
+  border: 2px solid transparent;
+}
+.source-tag{ display:block; color: var(--text-soft); font-size:0.85rem; margin-bottom:16px; font-weight:600; }
+
+.sign-visual{ display:flex; justify-content:center; margin: 8px 0 22px; }
+.question-text{ font-size: 1.35rem; font-weight:800; line-height:1.4; margin: 0 0 22px; }
+
+.options{ display:grid; gap:12px; }
+.opt{
+  display:flex; align-items:center; gap:14px;
+  background: var(--bg); border:2px solid var(--border); border-radius:12px;
+  padding:16px 18px; cursor:pointer; font-size:1.08rem; color: var(--text);
+  transition: border-color .15s, background .15s;
+  min-height: 30px;
+}
+.opt:hover, .opt:focus-visible{ border-color: var(--primary); background: var(--surface); outline:none; }
+.opt .letter{
+  width:32px; height:32px; flex:0 0 32px; border-radius:50%;
+  border:2px solid var(--border); display:flex; align-items:center; justify-content:center;
+  font-size:1rem; font-weight:800; color: var(--text-soft);
+}
+.opt.correct{ border-color: var(--success); background: var(--success-bg); }
+.opt.correct .letter{ background: var(--success); border-color: var(--success); color:#fff; }
+.opt.incorrect{ border-color: var(--error); background: var(--error-bg); }
+.opt.incorrect .letter{ background: var(--error); border-color: var(--error); color:#fff; }
+.opt.disabled{ cursor:default; }
+.mark{ margin-left:auto; font-weight:900; font-size:1.3rem; }
+.mark.correct{ color: var(--success); }
+.mark.incorrect{ color: var(--error); }
+
+.explain{
+  margin-top:18px; padding:16px 18px; border-radius:12px; background: var(--surface);
+  border: 2px solid var(--border); border-left: 6px solid var(--primary);
+  font-size:1.02rem; color: var(--text); line-height:1.6; display:none;
+}
+.explain.show{ display:block; }
+.explain b{ color: var(--primary-dark); }
+
+.nav-row{ display:flex; justify-content:flex-end; margin-top:24px; }
+.nav-row-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; gap:12px; }
+.q-counter{ font-size:1rem; font-weight:700; color: var(--text-soft); white-space:nowrap; }
+.btn{
+  font-size:1.05rem; font-weight:800; padding: 14px 28px; border-radius: 10px; border:2px solid var(--primary);
+  cursor:pointer; background: var(--primary); color: #fff;
+  font-family: inherit; min-height:48px;
+}
+.btn:hover{ background: var(--primary-dark); border-color: var(--primary-dark); }
+.btn:disabled{ opacity:0.4; cursor:not-allowed; background: var(--border); border-color:var(--border); color:#fff; }
+.btn.ghost{ background: var(--bg); color: var(--primary); }
+.btn.ghost:hover{ background: var(--surface); }
+
+.results{ text-align:center; }
+.badge{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:120px; height:120px; border-radius:50%; margin: 4px auto 18px;
+  font-size:2.4rem; font-weight:900; border: 6px solid;
+}
+.badge.pass{ background: var(--success-bg); border-color: var(--success); color: var(--success); }
+.badge.fail{ background: var(--error-bg); border-color: var(--error); color: var(--error); }
+.results h2{ font-size: 1.7rem; font-weight:800; margin: 0 0 6px; }
+.results .score{ font-size:1.1rem; color: var(--text-soft); margin-bottom: 22px; font-weight:700; }
+.section-scores{ display:grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap:12px; margin-bottom:26px; }
+.section-scores.single{ grid-template-columns: 1fr; max-width:280px; margin-left:auto; margin-right:auto; }
+.sec-card{ background: var(--surface); border-radius:12px; padding:14px; border: 2px solid var(--border); }
+.sec-card .label{ font-size:0.85rem; font-weight:800; color: var(--text-soft); margin-bottom:6px; line-height:1.3; }
+.sec-card .num{ font-size:1.5rem; font-weight:900; }
+.sec-card .pass{ color: var(--success); }
+.sec-card .fail{ color: var(--error); }
+
+.review-list{ text-align:left; margin-top: 8px; }
+.review-item{ background: var(--surface); border-radius:12px; padding:16px 18px; margin-bottom:12px; font-size:1rem; border:2px solid var(--border); }
+.review-item .q{ font-weight:800; margin-bottom:8px; }
+.review-item .a-wrong{ color: var(--error); font-weight:700; margin-bottom:4px; }
+.review-item .a-right{ color: var(--success); font-weight:700; }
+.review-item .src{ color: var(--text-soft); font-size:0.85rem; margin-top:6px; font-weight:600; }
+
+.footer-note{ display:none; }
+
+@media (max-width:480px){
+  body{ padding:14px 10px 40px; }
+  .hero{ padding-top: 52px; }
+  .card{ padding:16px 14px; }
+  .question-text{ font-size:1.15rem; }
+  .opt{ padding:13px 14px; font-size:1rem; }
+  .btn{ width:100%; padding:14px 20px; }
+  .nav-row{ justify-content:stretch; }
+  .nav-row-top{ flex-direction:column; align-items:stretch; gap:8px; }
+  .nav-row-top .btn{ width:100%; }
+  .q-counter{ text-align:center; }
+  .results .nav-row{ flex-direction:column; gap:10px; }
+  .results .nav-row .btn{ width:100%; }
+  .sign-visual svg{ width:88px; height:88px; }
+  .drawer{ width:100%; max-width:100%; }
+  .menu-btn{ top:12px; right:12px; width:44px; height:44px; }
+}
+@media (max-width:360px){
+  .hero h1{ font-size:1.5rem; }
+  .text-size-control span{ display:none; }
+}
+</style>
+</head>
+<body>
+<button class="menu-btn" onclick="openDrawer()" aria-haspopup="dialog" aria-label="Open menu">
+  <span class="bars"><span></span><span></span><span></span></span>
+</button>
+
+<div class="wrap">
+  <div class="hero" id="hero">
+    <div class="eyebrow">Grounded in the Official MTO Handbook</div>
+    <h1>Handbook Ready</h1>
+    <p id="heroDesc">Practice questions written from the full Official MTO Driver's Handbook — licensing, signs, intersections, turns, stopping, sharing the road, freeways, weather, demerit points, and suspensions.</p>
+  </div>
+  <div class="card" id="app"></div>
+</div>
+
+<div class="drawer-overlay" id="drawerOverlay" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+  <div class="drawer">
+    <div class="drawer-header">
+      <h2 id="drawerTitle">Menu</h2>
+      <button class="drawer-close" onclick="closeDrawer()" aria-label="Close menu">✕</button>
+    </div>
+
+    <div class="drawer-section">
+      <button class="btn" style="width:100%;" onclick="goHome()">⌂ Go to Homepage</button>
+    </div>
+
+    <div class="drawer-section" id="drawerProgress" style="display:none;"></div>
+
+    <div class="drawer-section">
+      <h3>Text size</h3>
+      <div class="text-size-control" role="group" aria-label="Text size">
+        <button class="size-btn" data-scale="1" onclick="setScale(1, this)">A</button>
+        <button class="size-btn" data-scale="1.25" onclick="setScale(1.25, this)">A+</button>
+        <button class="size-btn" data-scale="1.5" onclick="setScale(1.5, this)">A++</button>
+      </div>
+    </div>
+
+    <div class="drawer-section">
+      <div class="drawer-eyebrow">About</div>
+      <h3>Handbook Ready</h3>
+      <p>Practice questions written from the full Official MTO Driver's Handbook — licensing, signs, intersections, turns, stopping, sharing the road, freeways, weather, demerit points, and suspensions.</p>
+    </div>
+
+    <div class="drawer-section">
+      <h3>Important note</h3>
+      <p>Independent study tool. Questions are original, written from the content of the Official MTO Driver's Handbook (ontario.ca) as of mid-2026. Always confirm current rules against the official handbook and the Highway Traffic Act before your test.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function openDrawer(){
+  document.getElementById('drawerOverlay').classList.add('show');
+}
+function closeDrawer(){
+  document.getElementById('drawerOverlay').classList.remove('show');
+}
+function goHome(){
+  closeDrawer();
+  restart();
+}
+document.getElementById('drawerOverlay').addEventListener('click', (e)=>{
+  if(e.target.id === 'drawerOverlay') closeDrawer();
+});
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape') closeDrawer();
+});
+
+function updateFocusedMode(){
+  const hero = document.getElementById('hero');
+  if(!hero) return;
+  // Focused mode: hide the whole title block once a quiz is in progress (mid-question).
+  // It reappears on the chapter-selection screen and results screen.
+  if(state.mode && !state.showingResults){
+    hero.classList.add('hidden');
+  } else {
+    hero.classList.remove('hidden');
+  }
+}
+
+function updateDrawerProgress(){
+  const box = document.getElementById('drawerProgress');
+  if(!state.mode || state.showingResults){
+    box.style.display = 'none';
+    box.innerHTML = '';
+    return;
+  }
+  const q = state.queue[state.index];
+  const total = state.queue.length;
+  const pct = (state.index/total)*100;
+  const meta = CAT_META[q.cat];
+  const color = CAT_COLORS[q.cat];
+  box.style.display = 'block';
+  box.innerHTML = `
+    <h3>Current progress</h3>
+    <div class="drawer-progress-row"><span>Question ${state.index+1} of ${total}</span></div>
+    <div class="drawer-progress-track"><div class="drawer-progress-fill" style="width:${pct}%"></div></div>
+    <div class="drawer-cat-tag" style="background:${color}18; color:${color}; border-color:${color}40;">${meta.icon} ${meta.label}</div>
+    <div class="drawer-source">Source chapter: ${q.src}</div>
+  `;
+}
+
+function setScale(scale, btn){
+  document.documentElement.style.setProperty('--font-scale', scale);
+  document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+document.querySelector('.size-btn[data-scale="1"]').classList.add('active');
+
+function icon(name){
+  const wrap = (inner) => `<svg width="120" height="120" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+  switch(name){
+    case 'stop': return wrap(`<polygon points="30,6 66,6 90,30 90,66 66,90 30,90 6,66 6,30" fill="#B3261E" stroke="#fff" stroke-width="3"/><text x="48" y="58" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#fff" text-anchor="middle">STOP</text>`);
+    case 'yield': return wrap(`<polygon points="48,10 88,84 8,84" fill="#fff" stroke="#B3261E" stroke-width="8"/><polygon points="48,26 74,74 22,74" fill="#B3261E"/>`);
+    case 'school': return wrap(`<polygon points="48,6 90,48 48,90 6,48" fill="#D8F35E" stroke="#16191D" stroke-width="3"/><circle cx="48" cy="38" r="8" fill="#16191D"/><path d="M32 66 Q48 44 64 66" stroke="#16191D" stroke-width="4" fill="none" stroke-linecap="round"/>`);
+    case 'railway': return wrap(`<circle cx="48" cy="48" r="42" fill="none" stroke="#B3261E" stroke-width="4"/><line x1="10" y1="10" x2="86" y2="86" stroke="#B3261E" stroke-width="6"/><line x1="86" y1="10" x2="10" y2="86" stroke="#B3261E" stroke-width="6"/>`);
+    case 'noentry': return wrap(`<circle cx="48" cy="48" r="40" fill="#B3261E" stroke="#fff" stroke-width="3"/><rect x="20" y="42" width="56" height="12" rx="2" fill="#fff"/>`);
+    case 'pedcrossover': return wrap(`<rect x="8" y="8" width="80" height="80" rx="8" fill="#fff" stroke="#16191D" stroke-width="3"/><polygon points="48,20 60,40 36,40" fill="#16191D"/><circle cx="48" cy="55" r="6" fill="#16191D"/><path d="M48 63 L40 80 M48 63 L56 80 M48 63 L36 70 M48 63 L60 70" stroke="#16191D" stroke-width="4" stroke-linecap="round"/>`);
+    case 'oneway': return wrap(`<rect x="6" y="30" width="84" height="36" rx="4" fill="#16191D" stroke="#fff" stroke-width="2"/><polygon points="70,48 46,34 46,62" fill="#fff"/><rect x="18" y="42" width="26" height="12" fill="#fff"/>`);
+    case 'roundabout': return wrap(`<polygon points="48,6 90,48 48,90 6,48" fill="#FFC72C" stroke="#16191D" stroke-width="3"/><circle cx="48" cy="48" r="16" fill="none" stroke="#16191D" stroke-width="5"/><polygon points="60,34 68,32 66,40" fill="#16191D"/>`);
+    case 'divided': return wrap(`<polygon points="48,6 90,48 48,90 6,48" fill="#FFC72C" stroke="#16191D" stroke-width="3"/><rect x="42" y="18" width="4" height="60" fill="#16191D"/><polygon points="30,26 42,20 42,32" fill="#16191D"/><polygon points="66,70 54,76 54,64" fill="#16191D"/>`);
+    case 'hov': return wrap(`<rect x="6" y="20" width="84" height="56" rx="6" fill="#fff" stroke="#16191D" stroke-width="3"/><text x="48" y="55" font-family="Arial, sans-serif" font-size="20" font-weight="800" fill="#16191D" text-anchor="middle">HOV</text>`);
+    default: return wrap(`<circle cx="48" cy="48" r="40" fill="#C9D0DA"/>`);
+  }
+}
+
+const QUESTIONS = {
+  licensing: [
+    {q:"How long does the two-step graduated licensing process take at minimum, from G1 to full G licence?", opts:["12 months","16 months","20 months","24 months"], correct:2, exp:"The full process takes at least 20 months when both Level One (G1) and Level Two (G2) are completed at their standard lengths.", src:"Getting Your Driver's Licence"},
+    {q:"How long does Level One (G1) normally last, and how short can it be with an approved driver-education course?", opts:["12 months, reduced to 8 months","6 months, reduced to 4 months","12 months, reduced to 10 months","There is no minimum, only a road test"], correct:0, exp:"Level One lasts 12 months, but completing an approved beginner driver education course lets you complete it in as little as 8 months.", src:"Getting Your Driver's Licence"},
+    {q:"Who is qualified to be a G1 driver's accompanying supervisor?", opts:["Any licensed adult over 21","A fully licensed driver with at least 4 years of experience and a BAC under .05%","A G2 driver with a clean record","Any family member, regardless of licence class"], correct:1, exp:"The supervisor must hold a full Class G (or higher) licence, have at least 4 years of driving experience, and keep their BAC under .05% while supervising.", src:"Getting Your Driver's Licence"},
+    {q:"Which of these are G1 drivers generally not allowed to do (unless supervised by a driving instructor)?", opts:["Driving in the rain","Driving on 400-series highways posted over 80 km/h","Driving with the radio on","Driving with more than one passenger"], correct:1, exp:"G1 drivers may not drive on 400-series highways posted above 80 km/h, or on certain named expressways such as the QEW or Gardiner Expressway, unless a driving instructor is supervising.", src:"Getting Your Driver's Licence"},
+    {q:"What hours are G1 drivers prohibited from driving during?", opts:["10 p.m. to 6 a.m.","Midnight to 5 a.m.","11 p.m. to 5 a.m.","There is no restricted period"], correct:1, exp:"G1 drivers must not drive between midnight and 5 a.m., regardless of who is supervising.", src:"Getting Your Driver's Licence"},
+    {q:"For G2 drivers aged 19 and under, what passenger limit applies overnight in the first six months?", opts:["No restrictions apply","Only one passenger aged 19 or under, with exceptions","Maximum of three passengers","No passengers at all, ever"], correct:1, exp:"In the first six months with a G2, drivers 19 and under may carry only one passenger 19 or under overnight, unless a fully licensed supervisor or immediate family is in the car.", src:"Getting Your Driver's Licence"},
+    {q:"What is the blood-alcohol rule for all drivers aged 21 and under, regardless of licence class?", opts:["Under .05%","Under .08%","Zero — no alcohol at all","No specific rule beyond the general limit"], correct:2, exp:"All drivers 21 and under must keep a zero blood-alcohol level while driving, no matter what licence class they hold.", src:"Getting Your Driver's Licence / Other Ways to Lose Your Licence"},
+    {q:"To move from Level One (G1) to Level Two (G2), what must you pass?", opts:["A written test only","A road test of your driving skills","A defensive driving course","90 days without a violation"], correct:1, exp:"A road test of your driving skills is required to move from G1 to G2, and a second road test after Level Two grants full G privileges.", src:"Getting Your Driver's Licence"}
+  ],
+  signs: [
+    {icon:'stop', q:"Where must you stop if there's no stop line and no crosswalk at a stop sign?", opts:["At the edge of the sidewalk","Wherever you can see cross traffic","Exactly at the stop sign post","There is no requirement to stop fully"], correct:0, exp:"Stop at the marked line if there is one, then the crosswalk, then the edge of the sidewalk, then the edge of the intersection — whichever comes first.", src:"Signs / Stopping"},
+    {icon:'yield', q:"What must you do at a yield sign?", opts:["Always come to a full stop for at least 3 seconds","Let traffic in or close to the intersection go first, stopping only if necessary","Proceed if you arrived first, no matter what","Only yield to pedestrians, not vehicles"], correct:1, exp:"A yield sign means letting traffic in or near the intersection go first — stop only if necessary, and go once it's clear.", src:"Signs"},
+    {icon:'school', q:"What shape and colour is an Ontario school zone sign?", opts:["Octagonal, red background","Five-sided, fluorescent yellow-green background","Diamond, orange background","Circular, white background with red border"], correct:1, exp:"A school zone sign is five-sided with a fluorescent yellow-green background, warning you to slow down and watch for children.", src:"Signs"},
+    {icon:'railway', q:"What shape is the standard railway crossing sign?", opts:["A circular sign with a hydro symbol","An X-shape with a white background and red outline","A diamond with an orange background","A rectangular green sign"], correct:1, exp:"The railway crossing sign is X-shaped with a white background and red outline, warning that tracks cross the road ahead.", src:"Signs"},
+    {icon:'noentry', q:"A red circle with a solid white bar through it, with no other symbol, generally means:", opts:["No parking here","Do not enter this road","One-way traffic only","Construction zone ahead"], correct:1, exp:"This regulatory sign tells you not to enter the road in that direction.", src:"Signs"},
+    {q:"What colour and shape are regulatory signs, generally speaking?", opts:["Diamond-shaped, yellow background","Usually rectangular or square, white or black background","Always orange with black text","Circular, green background"], correct:1, exp:"Regulatory signs, which give a direction you must obey, are usually rectangular or square with a white or black background.", src:"Signs"},
+    {icon:'pedcrossover', q:"At a pedestrian crossover, when may drivers proceed?", opts:["As soon as the pedestrian starts crossing","Only after pedestrians (and any crossing guard) have completely crossed and reached the sidewalk","After honking to alert the pedestrian","Once the pedestrian has crossed the driver's own lane"], correct:1, exp:"Drivers, including cyclists, must yield until pedestrians and crossing guards have fully cleared the roadway and are safely on the sidewalk.", src:"Stopping"},
+    {q:"What do warning signs generally look like in Ontario?", opts:["Diamond-shaped, yellow background with black symbols","Octagonal, red background","Rectangular, green background","Orange diamond with black border"], correct:0, exp:"Warning signs are usually yellow diamonds with black symbols, alerting drivers to unusual or dangerous conditions ahead.", src:"Signs"},
+    {icon:'roundabout', q:"What does a roundabout warning sign show, and what should you do at the roundabout?", opts:["A clockwise arrow; keep left","A counter-clockwise arrow; slow down and yield to circulating traffic","A stop symbol; always come to a full stop first","A merge symbol only"], correct:1, exp:"The sign uses counter-clockwise arrows showing traffic flow inside. Slow on approach and yield to vehicles already circulating.", src:"Signs"},
+    {icon:'divided', q:"What does a 'divided highway begins' warning sign tell you to do?", opts:["Merge left immediately","Keep to the right-hand road, since each road now carries one-way traffic","Prepare to make a U-turn","Slow to the posted ramp speed"], correct:1, exp:"This sign warns that a divided highway begins ahead — keep to the right-hand road as each side now carries one-way traffic.", src:"Signs"},
+    {q:"An orange, diamond-shaped sign, distinct from the standard yellow warning sign, generally indicates:", opts:["A permanent hazard","A temporary condition such as construction or a detour","A speed limit change","An information sign"], correct:1, exp:"Temporary condition signs use an orange diamond with black symbols, marking work zones, detours, and lane closures.", src:"Signs"},
+    {icon:'hov', q:"What does a High Occupancy Vehicle (HOV) lane sign indicate?", opts:["Only trucks may use the lane","Only public transit, or vehicles carrying a set minimum of passengers, may use the lane","Any vehicle may use it at any time","Only emergency vehicles may use it"], correct:1, exp:"HOV lane signs restrict the lane to public vehicles like buses, or passenger vehicles carrying at least the posted minimum number of occupants.", src:"Signs / Freeway Driving"}
+  ],
+  turns: [
+    {q:"At an uncontrolled intersection, if two vehicles arrive at the same time from different roads, who goes first?", opts:["The vehicle on the left","The vehicle on the right","Whichever vehicle is larger","Whichever vehicle signals first"], correct:1, exp:"If two vehicles arrive at the same time with no signs or lights, the driver on the left must yield to the driver on the right.", src:"Driving Through Intersections"},
+    {q:"When turning left, what must you do before completing the turn?", opts:["Proceed as soon as your signal is on","Wait for approaching traffic to pass or turn, and for pedestrians in or approaching your path","Only worry about oncoming traffic, not pedestrians","Nothing extra beyond normal caution"], correct:1, exp:"Left turns require yielding to approaching traffic and to pedestrians in or approaching your path.", src:"Driving Through Intersections"},
+    {q:"Does signalling a turn give you the right-of-way?", opts:["Yes, once you signal, others must yield","No — you must still make sure the way is clear","Only on two-lane roads","Only if you signal for at least 3 seconds"], correct:1, exp:"Signalling never gives you the right-of-way. You're still responsible for making sure the way is clear.", src:"Driving Through Intersections"},
+    {q:"May you turn right on a red light in Ontario?", opts:["Never, anywhere in the province","Yes, after a complete stop and yielding, unless a sign says not to","Yes, without stopping, if the way looks clear","Only if you're a fully licensed driver"], correct:1, exp:"Right turns on red are allowed after a full stop and yielding to pedestrians and traffic, unless posted otherwise.", src:"Changing Directions"},
+    {q:"When may you legally turn left on a red light?", opts:["Never, under any circumstance","From a one-way road onto a one-way road, after a full stop and yielding","Only if a police officer directs you to","From any road, as long as you signal first"], correct:1, exp:"Left turns on red are only permitted from a one-way road onto another one-way road, after stopping completely and yielding.", src:"Changing Directions"},
+    {q:"How far must you be able to see in both directions before making a U-turn?", opts:["50 metres","100 metres","150 metres","There is no distance requirement"], correct:2, exp:"You must never make a U-turn unless you can see at least 150 metres in both directions, and never on a curve, hilltop, or near a railway crossing, bridge, or tunnel.", src:"Changing Directions"},
+    {q:"Inside a roundabout, who has the right-of-way?", opts:["Vehicles entering the roundabout","Vehicles already circulating inside the roundabout","Whichever vehicle is going straight","Large vehicles always have priority"], correct:1, exp:"Traffic already circulating in a roundabout has the right-of-way; entering vehicles must yield and find a safe gap.", src:"Changing Directions"},
+    {q:"On a divided highway with a speed limit over 80 km/h, is it legal to drive in reverse?", opts:["Yes, if no one is behind you","No — it's illegal on the travelled section and the shoulder, except to help someone in trouble","Yes, but only in the rightmost lane","Yes, if your hazard lights are on"], correct:1, exp:"Reversing on a divided road posted above 80 km/h is illegal, on both the road and the shoulder, with an exception for helping someone in trouble.", src:"Changing Directions"}
+  ],
+  stopping: [
+    {q:"When a school bus ahead has its upper red lights flashing on an undivided road, who must stop?", opts:["Only vehicles approaching from behind the bus","Only oncoming vehicles","Traffic in both directions","Only vehicles with children as passengers"], correct:2, exp:"On an undivided road, traffic in both directions must stop for a school bus with flashing upper red lights.", src:"Stopping"},
+    {q:"On a road with a median strip, who must stop for a school bus with flashing red lights?", opts:["Only vehicles coming from behind the bus","Vehicles in both directions still","No one, since the median separates traffic","Only the vehicle directly behind the bus"], correct:0, exp:"Where a physical median separates the directions, only vehicles approaching from behind the bus must stop.", src:"Stopping"},
+    {q:"How far back must you stop if approaching a stopped school bus from behind, on a two-way road?", opts:["At least 5 metres","At least 10 metres","At least 20 metres","There is no fixed distance"], correct:2, exp:"Vehicles approaching a stopped school bus from behind must stop at least 20 metres away.", src:"Stopping"},
+    {q:"What penalty applies for a first offence of failing to stop for a stopped school bus?", opts:["A warning only","A fine and 6 demerit points","A fine and 3 demerit points","Immediate suspension with no fine"], correct:1, exp:"Failing to stop for a school bus with flashing red lights can mean a heavy fine and 6 demerit points for a first offence.", src:"Stopping / Keeping Your Licence"},
+    {icon:'railway', q:"At a railway crossing, if a train is coming, how far back should you stop from the nearest rail?", opts:["At least 1 metre","At least 5 metres","At least 15 metres","At least 50 metres"], correct:1, exp:"Stop at least five metres from the nearest rail or gate if a train is approaching.", src:"Stopping"},
+    {q:"Where a crossing guard displays a stop sign at a school crossing, when may you proceed?", opts:["As soon as the nearest child has crossed your lane","Once you've stopped for 5 seconds","Only once everyone, including the guard, has completely cleared the roadway","As soon as the guard lowers their sign partway"], correct:2, exp:"You must remain stopped until all pedestrians and the crossing guard have fully cleared the roadway.", src:"Stopping"},
+    {q:"How long can it take a train to stop under full emergency braking?", opts:["About 200 metres","About 1 kilometre","Up to two kilometres","A few car-lengths"], correct:2, exp:"It can take up to two kilometres for a train to stop under full emergency braking — never race a train to a crossing.", src:"Stopping"},
+    {q:"What do a school bus's flashing amber (yellow) lights mean, as opposed to its flashing red lights?", opts:["The bus is about to stop to load or unload — slow down and prepare to stop","The bus has broken down","You must always stop immediately for amber lights, same as red","Amber lights have no meaning for other drivers"], correct:0, exp:"Amber lights are a warning that the bus is coming to a stop — slow down and prepare to stop. Once the red lights begin flashing, you must stop.", src:"Sharing the Road with Other Road Users"}
+  ],
+  sharing: [
+    {q:"When passing a cyclist, what is the minimum distance drivers must maintain, where practical?", opts:["0.5 metres","1 metre","2 metres","There is no minimum distance"], correct:1, exp:"Drivers must leave at least one metre between their vehicle and a cyclist when passing, where practical. Failing to do so can mean a fine and 2 demerit points.", src:"Sharing the Road with Other Road Users"},
+    {q:"When turning left and a cyclist is riding straight through the intersection, what must you do?", opts:["Turn first since you signalled earlier","Stop and wait for the oncoming cyclist to pass before turning","Sound your horn to warn the cyclist","Speed up to complete the turn before they arrive"], correct:1, exp:"You must stop and let oncoming bicycles pass before completing a left turn, the same as you would for any oncoming vehicle.", src:"Sharing the Road with Other Road Users"},
+    {q:"What is a 'bike box' at an intersection, and what should a driver do?", opts:["A bicycle parking area; drivers should ignore it","A painted area for cyclists ahead of the stop line; drivers must stop behind it, not in it","A storage box for road maintenance tools","A place where drivers may park temporarily"], correct:1, exp:"A bike box is a painted area with a bicycle symbol, positioned ahead of where vehicles stop. Drivers must stop behind it, never in it.", src:"Sharing the Road with Other Road Users"},
+    {q:"Why should drivers avoid tailgating large commercial vehicles like tractor-trailers?", opts:["It's only a courtesy issue, not a safety one","Large vehicles have big blind spots, and the driver can't see you directly behind them","It slows down traffic behind you","It has no particular safety concern"], correct:1, exp:"If you can't see the truck driver's face in their side mirror, they can't see you. Tailgating leaves you nowhere to go if the truck stops suddenly.", src:"Sharing the Road with Other Road Users"},
+    {q:"If a large vehicle ahead of you is making a wide right turn and space opens up in the lane beside it, what should you do?", opts:["Move into that space quickly before someone else does","Stay well back — the vehicle will move back into that space once its rear clears the corner","Pass on the right immediately","Honk to make the truck driver hurry"], correct:1, exp:"Large vehicles often swing wide before a right turn. Moving into the space that opens up can trap you between the trailer and the curb.", src:"Sharing the Road with Other Road Users"},
+    {q:"What must drivers of hybrid or electric vehicles keep in mind around pedestrians?", opts:["Nothing different from gas vehicles","Vision-impaired pedestrians often rely on engine sound, and quiet vehicles may not be heard when slowing or stopping","Electric vehicles are exempt from yielding to pedestrians","Only applies to fully autonomous vehicles"], correct:1, exp:"Because hybrid and electric vehicles make little noise at low speed, extra caution is needed around pedestrians who may rely on hearing an engine before crossing.", src:"Sharing the Road with Other Road Users"},
+    {q:"What speed do most farm tractors and combines travel at, and what should you do if you see the slow-moving vehicle sign?", opts:["Around 40 km/h or less; slow down and pass only when safe","Around 60 km/h; no special caution needed","Around 20 km/h; you must always stop behind them","Around 80 km/h; treat them like regular traffic"], correct:0, exp:"Farm machinery typically travels 40 km/h or less. The orange-and-red slow-moving vehicle sign warns you to slow down and stay well back until it's safe to pass.", src:"Sharing the Road with Other Road Users"},
+    {q:"When approaching an oncoming horse-drawn vehicle, what should you do?", opts:["Move to the far right of your lane and pass with maximum distance when safe","Pass as closely as normal traffic","Honk to alert the horse","Speed past quickly to minimize contact time"], correct:0, exp:"Move to the far right of your lane when meeting a horse-drawn vehicle, and give as much distance as possible when passing — startling the horse can be dangerous.", src:"Sharing the Road with Other Road Users"}
+  ],
+  freeway: [
+    {q:"Can a G1 driver drive on a freeway?", opts:["Yes, freely, like any other road","Only with a licensed driving instructor","Only during daylight hours","No, G1 drivers can never use freeways"], correct:1, exp:"Class G1 drivers may only drive on freeways with a licensed driving instructor.", src:"Freeway Driving"},
+    {q:"What should you do while in a freeway's acceleration lane?", opts:["Slow down to let others merge first","Increase your speed to match freeway traffic before merging","Stop and wait for a gap","Merge immediately regardless of your speed"], correct:1, exp:"The acceleration lane exists so you can increase speed to match freeway traffic before merging smoothly.", src:"Freeway Driving"},
+    {q:"On a multi-lane freeway, which lane should you generally drive in when not passing?", opts:["The far left lane","The right-hand lane","Whichever lane has less traffic","The centre lane at all times"], correct:1, exp:"Drivers should generally use the right-hand lane and move left only to pass, keeping the left lane clear for other traffic.", src:"Freeway Driving"},
+    {q:"How many occupants are generally required for a regular passenger vehicle to use a provincial HOV lane?", opts:["At least 1 (the driver alone)","At least 2, including the driver","At least 3, including the driver","At least 4, including the driver"], correct:1, exp:"Provincial HOV lanes generally require at least two people in the vehicle — the driver plus at least one passenger.", src:"Freeway Driving"},
+    {q:"What is 'speed adaptation' (or velocitization), and when is it a particular danger?", opts:["A GPS feature; not a real driving concern","Losing your accurate sense of speed after driving fast for a while — a special danger when leaving a freeway","A term for cruise control malfunction","A legal requirement for freeway signage"], correct:1, exp:"After sustained high-speed driving, you may not realize how fast you're still going — this is especially risky when exiting a freeway, so check your speedometer.", src:"Freeway Driving"},
+    {q:"If you miss your freeway exit, what should you do?", opts:["Stop and reverse to the exit","Take the next available exit","Cross the median if it's safe","Pull onto the shoulder and wait"], correct:1, exp:"Never stop or reverse on a freeway if you miss your exit — simply continue to the next one.", src:"Freeway Driving"}
+  ],
+  weather: [
+    {q:"What does it mean to 'overdrive your headlights'?", opts:["Using your high beams too often","Driving so fast that your stopping distance is farther than you can see with your headlights","Leaving your headlights on during the day","Using aftermarket headlight bulbs"], correct:1, exp:"Overdriving your headlights means you can't stop safely within the distance your headlights let you see — a common night-driving hazard.", src:"Driving at Night and in Bad Weather"},
+    {q:"When should you switch to low-beam headlights around other vehicles?", opts:["Within 150 metres of an oncoming vehicle, or within 60 metres of one you're following","Only when directly requested by a flashed signal","Never — high beams are always safest","Only in fog, never near other vehicles"], correct:0, exp:"Use low beams within 150 metres of an oncoming vehicle, or within 60 metres of a vehicle you're following, to avoid blinding other drivers.", src:"Driving at Night and in Bad Weather"},
+    {q:"In fog, should you use high-beam or low-beam headlights?", opts:["High beams, for maximum visibility","Low beams — high beams reflect off the moisture and reduce visibility further","Neither; drive with lights off","Alternating between high and low beams"], correct:1, exp:"High beams reflect off fog droplets and make visibility worse. Use low beams, and fog lights if your vehicle has them.", src:"Driving at Night and in Bad Weather"},
+    {q:"What is hydroplaning?", opts:["A tire blowout at high speed","When tires ride on top of water instead of gripping the road, causing loss of control","A type of winter tire technology","Driving through a flooded underpass safely"], correct:1, exp:"Hydroplaning happens when too much water builds up under the tires, causing them to lose contact with the road surface.", src:"Driving at Night and in Bad Weather"},
+    {q:"What does 'black ice' typically look like on the road?", opts:["Bright white and highly visible","Shiny, dark asphalt that looks deceptively normal","Always accompanied by visible frost","Bumpy and clearly textured"], correct:1, exp:"Black ice is a thin, often invisible layer of ice — if the road looks unusually shiny and dark, be suspicious and slow down.", src:"Driving at Night and in Bad Weather"},
+    {q:"If your vehicle begins to skid, what is the recommended first response?", opts:["Brake as hard as possible immediately","Ease off the accelerator or brake, and steer gently in the direction you want to go","Turn the wheel sharply opposite to the skid","Shift into a higher gear"], correct:1, exp:"Ease off the pedal, avoid overcorrecting, and steer smoothly in your intended direction. Aggressive braking or steering can make a skid worse.", src:"Driving at Night and in Bad Weather"},
+    {q:"With anti-lock brakes (ABS), what should you expect when braking hard in an emergency?", opts:["The brake pedal will feel completely smooth with no vibration","You may feel pulsations in the brake pedal — this is normal, don't release the pedal","ABS eliminates the need to brake at all","ABS always shortens your stopping distance significantly"], correct:1, exp:"ABS pulsations in the pedal are normal during hard braking. Keep firm, steady pressure rather than releasing the pedal.", src:"Driving at Night and in Bad Weather"},
+    {q:"What should you do if visibility drops to near zero in blowing snow or fog?", opts:["Stop on the travelled portion of the road with your hazards on","Pull completely off the road into a safe parking area, then use hazard flashers","Speed up to get through the area faster","Continue at the same speed but honk periodically"], correct:1, exp:"Never stop on the travelled road — pull completely into a safe parking area and use your hazard flashers while conditions clear.", src:"Driving at Night and in Bad Weather"}
+  ],
+  demerits: [
+    {q:"At how many demerit points does a fully licensed driver's licence get suspended?", opts:["9 points","12 points","15 points","20 points"], correct:2, exp:"Fully licensed drivers face a 30-day suspension once they reach 15 demerit points.", src:"Keeping Your Driver's Licence"},
+    {q:"At how many demerit points does a novice driver's (G1/G2) licence get suspended?", opts:["6 points","9 points","12 points","15 points, same as fully licensed drivers"], correct:1, exp:"Novice drivers face suspension at 9 or more demerit points within a two-year period — a stricter standard than fully licensed drivers.", src:"Keeping Your Driver's Licence"},
+    {q:"How long do demerit points stay on your driving record?", opts:["6 months","1 year","2 years from the date of the offence","5 years"], correct:2, exp:"Demerit points remain on your record for two years from the date of the offence.", src:"Keeping Your Driver's Licence"},
+    {q:"How many demerit points are recorded for failing to remain at the scene of a collision?", opts:["3 points","4 points","6 points","7 points"], correct:3, exp:"This carries 7 demerit points — the highest value in the table, alongside failing to stop for police.", src:"Keeping Your Driver's Licence"},
+    {q:"How many demerit points does exceeding the speed limit by 50 km/h or more carry?", opts:["3 points","4 points","6 points","7 points"], correct:2, exp:"Exceeding the limit by 50 km/h or more (or 40 km/h or more on roads posted under 80 km/h) carries 6 demerit points.", src:"Keeping Your Driver's Licence"},
+    {q:"How many demerit points are assigned for driving while holding or using a hand-held device?", opts:["2 points","3 points","4 points","6 points"], correct:1, exp:"Driving while holding or using a hand-held wireless device carries 3 demerit points.", src:"Keeping Your Driver's Licence"},
+    {q:"How many demerit points does a driver get for failing to wear a seatbelt?", opts:["1 point","2 points","3 points","4 points"], correct:1, exp:"Failing to wear a seatbelt carries 2 demerit points — the same category as failing to signal.", src:"Keeping Your Driver's Licence"},
+    {q:"Passing a cyclist without leaving the required minimum distance carries how many demerit points?", opts:["1 point","2 points","3 points","4 points"], correct:1, exp:"Failing to leave at least one metre when passing a cyclist can mean a fine and 2 demerit points.", src:"Sharing the Road / Keeping Your Licence"},
+    {q:"After a fully licensed driver's 15-point suspension is served, how many points remain on their record?", opts:["0 points","4 points","7 points","10 points"], correct:2, exp:"After the suspension, their point total is reduced to 7 — further points from there can trigger another suspension.", src:"Keeping Your Driver's Licence"}
+  ],
+  suspensions: [
+    {q:"What immediate roadside suspension applies if your BAC tests at .08 or higher?", opts:["No immediate suspension, only a court date","A 90-day Administrative Driver's Licence Suspension (ADLS)","A 24-hour suspension only","A permanent suspension with no review"], correct:1, exp:"Testing at .08 or higher, or refusing to provide a sample, triggers an immediate 90-day roadside suspension, separate from any criminal charges.", src:"Other Ways to Lose Your Licence"},
+    {q:"What happens if you're caught driving in the 'warn range' (.05 to .08 BAC) for the first time?", opts:["No penalty, just a verbal warning","A 3-day roadside licence suspension","A 30-day suspension","Immediate vehicle impoundment for 45 days"], correct:1, exp:"A first warn-range occurrence brings an immediate 3-day suspension; a second brings 7 days plus a remedial alcohol program.", src:"Other Ways to Lose Your Licence"},
+    {q:"If you're 21 or under and caught driving with any detectable alcohol, what happens?", opts:["Nothing, since you're a new driver","A 24-hour roadside suspension, with a possible fine and 30-day suspension if convicted","An automatic lifetime ban","A warning letter only"], correct:1, exp:"Drivers 21 and under must have zero BAC. A violation brings a 24-hour roadside suspension, and a conviction can mean a fine and at least a 30-day suspension.", src:"Other Ways to Lose Your Licence"},
+    {q:"What is the minimum licence suspension for failing to stop for a police officer?", opts:["30 days","6 months","1 year","5 years"], correct:3, exp:"Failing to stop for police carries a mandatory minimum 5-year licence suspension.", src:"Other Ways to Lose Your Licence"},
+    {q:"How long is a vehicle impounded if the driver is caught driving under a Criminal Code suspension?", opts:["7 days","24 hours","A minimum of 45 days","There is no impoundment, only a fine"], correct:2, exp:"A vehicle is impounded for a minimum of 45 days when the driver is caught driving while suspended for a Criminal Code offence — even if the vehicle is borrowed or rented.", src:"Other Ways to Lose Your Licence"},
+    {q:"What licence suspension applies for a first Criminal Code impaired-driving conviction?", opts:["30 days","1 year","5 years","Lifetime ban immediately"], correct:1, exp:"A first Criminal Code conviction brings a one-year suspension; subsequent offences escalate substantially, up to a lifetime ban.", src:"Other Ways to Lose Your Licence"},
+    {q:"What must doctors do if a patient 16 or older has a medical condition that may affect safe driving?", opts:["Nothing; it's confidential and never reported","Report the person's name and address to the Ministry of Transportation","Report only to the patient's family","Immediately revoke the licence themselves"], correct:1, exp:"Doctors are legally required to report such conditions to the Ministry, which may then suspend the licence until updated medical evidence is provided.", src:"Other Ways to Lose Your Licence"},
+    {q:"Roughly how much greater is the risk of a fatality or serious injury when a vehicle crashes at 50 km/h or more over a posted limit of 60 km/h or less?", opts:["About twice as likely","About five times as likely","About eight times as likely","No meaningfully higher risk"], correct:2, exp:"On roads posted at 60 km/h or less, the risk of a fatality or serious injury is almost eight times greater at 50 km/h or more over the limit.", src:"Other Ways to Lose Your Licence"}
+  ]
+};
+
+const CAT_META = {
+  licensing:{label:"Getting Licensed", icon:"🪪"},
+  signs:{label:"Signs", icon:"🚸"},
+  turns:{label:"Turns & Roundabouts", icon:"↩️"},
+  stopping:{label:"Stopping & School Buses", icon:"🚌"},
+  sharing:{label:"Sharing the Road", icon:"🚴"},
+  freeway:{label:"Freeway Driving", icon:"🛣️"},
+  weather:{label:"Night & Bad Weather", icon:"🌧️"},
+  demerits:{label:"Demerit Points", icon:"⚠️"},
+  suspensions:{label:"Losing Your Licence", icon:"🚫"}
+};
+const CAT_COLORS = {
+  licensing:"#0B4F8A", signs:"#8A5A00", turns:"#6A4EA1", stopping:"#B3261E",
+  sharing:"#146C43", freeway:"#0B4F8A", weather:"#0B4F8A", demerits:"#B3261E", suspensions:"#B3261E"
+};
+
+let state = { mode:null, queue:[], index:0, answered:false, selected:null, results:[], showingResults:false };
+
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+
+function buildQueue(mode){
+  if(mode === 'all'){
+    let all = [];
+    Object.keys(QUESTIONS).forEach(cat=>{ all = all.concat(QUESTIONS[cat].map(q=>({...q, cat}))); });
+    return shuffle(all);
+  }
+  return shuffle(QUESTIONS[mode].map(q=>({...q, cat:mode})));
+}
+
+function startQuiz(mode){
+  state = { mode, queue: buildQueue(mode), index:0, answered:false, selected:null, results:[], showingResults:false };
+  render();
+}
+function selectOption(i){
+  if(state.answered) return;
+  state.answered = true; state.selected = i;
+  const q = state.queue[state.index];
+  state.results.push({q:q.q, cat:q.cat, src:q.src, correct: i===q.correct, chosen:q.opts[i], right:q.opts[q.correct]});
+  render();
+}
+function nextQuestion(){
+  if(state.index < state.queue.length - 1){ state.index++; state.answered=false; state.selected=null; render(); }
+  else { state.showingResults = true; render(true); }
+}
+function restart(){ state = {mode:null, queue:[], index:0, answered:false, selected:null, results:[], showingResults:false}; render(); }
+
+function render(showResults){
+  updateFocusedMode();
+  updateDrawerProgress();
+  const app = document.getElementById('app');
+  if(!state.mode){
+    const catButtons = Object.keys(QUESTIONS).map(cat=>{
+      const m = CAT_META[cat];
+      return `<div class="mode-btn" onclick="startQuiz('${cat}')" role="button" tabindex="0">
+        <div class="mode-icon">${m.icon}</div>
+        <div><div class="mode-title">${m.label}</div><div class="mode-desc">${QUESTIONS[cat].length} questions</div></div>
+      </div>`;
+    }).join('');
+    const total = Object.values(QUESTIONS).reduce((s,a)=>s+a.length,0);
+    app.innerHTML = `
+      <div class="setup">
+        <h2>Choose a chapter to practice</h2>
+        <div class="sub">Every question is written from the current MTO Driver's Handbook chapters. Pick one topic, or do them all together.</div>
+        <div class="modes">
+          <div class="mode-btn mode-all" onclick="startQuiz('all')" role="button" tabindex="0">
+            <div class="mode-icon">🔀</div>
+            <div><div class="mode-title">All Chapters, Mixed</div><div class="mode-desc">${total} questions across every topic, shuffled</div></div>
+          </div>
+          ${catButtons}
+        </div>
+      </div>`;
+    return;
+  }
+  if(showResults){ renderResults(app); return; }
+
+  const q = state.queue[state.index];
+  const total = state.queue.length;
+  const isLast = state.index === total-1;
+
+  app.innerHTML = `
+    <div class="nav-row-top">
+      <span class="q-counter">Question ${state.index+1} of ${total}</span>
+      <button class="btn" id="nextBtn" ${state.answered?'':'disabled'} onclick="nextQuestion()">${isLast?'See Results':'Next Question'}</button>
+    </div>
+    ${q.icon ? `<div class="sign-visual">${icon(q.icon)}</div>` : ''}
+    <div class="question-text">${q.q}</div>
+    <div class="options" id="options">
+      ${q.opts.map((opt,i)=>`<div class="opt" data-i="${i}" onclick="selectOption(${i})" role="button" tabindex="0"><div class="letter">${String.fromCharCode(65+i)}</div><div>${opt}</div></div>`).join('')}
+    </div>
+    <div class="explain" id="explain"><b>Why:</b> ${q.exp}</div>
+  `;
+  if(state.answered){
+    document.querySelectorAll('.opt').forEach((el,i)=>{
+      el.classList.add('disabled'); el.onclick=null;
+      if(i===q.correct){ el.classList.add('correct'); el.insertAdjacentHTML('beforeend', '<span class="mark correct">✓</span>'); }
+      else if(i===state.selected){ el.classList.add('incorrect'); el.insertAdjacentHTML('beforeend', '<span class="mark incorrect">✗</span>'); }
+    });
+    document.getElementById('explain').classList.add('show');
+  }
+}
+
+function renderResults(app){
+  const total = state.results.length;
+  const correctCount = state.results.filter(r=>r.correct).length;
+  const pctScore = Math.round((correctCount/total)*100);
+
+  let sectionsHtml = '';
+  if(state.mode === 'all'){
+    const byCat = {};
+    state.results.forEach(r=>{ byCat[r.cat] = byCat[r.cat] || []; byCat[r.cat].push(r); });
+    sectionsHtml = `<div class="section-scores">` + Object.keys(byCat).map(cat=>{
+      const arr = byCat[cat]; const c = arr.filter(r=>r.correct).length;
+      const pass = c/arr.length >= 0.7;
+      return `<div class="sec-card"><div class="label">${CAT_META[cat].icon} ${CAT_META[cat].label}</div><div class="num ${pass?'pass':'fail'}">${c}/${arr.length}</div></div>`;
+    }).join('') + `</div>`;
+  } else {
+    sectionsHtml = `<div class="section-scores single"><div class="sec-card"><div class="label">${CAT_META[state.mode].label}</div><div class="num ${pctScore>=70?'pass':'fail'}">${correctCount} / ${total}</div></div></div>`;
+  }
+
+  const passed = pctScore >= 70;
+
+  const wrongItems = state.results.filter(r=>!r.correct);
+
+  app.innerHTML = `
+    <div class="results">
+      <div class="badge ${passed?'pass':'fail'}">${passed ? '✓' : '↻'}</div>
+      <h2>${passed ? "Solid grasp of that chapter" : "Worth another pass"}</h2>
+      <div class="score">${correctCount} of ${total} correct — ${pctScore}%</div>
+      ${sectionsHtml}
+      ${wrongItems.length ? `
+        <div style="text-align:left; margin-top:8px;">
+          <div style="font-size:0.95rem; font-weight:800; color: var(--text-soft); margin-bottom:10px;">Review missed questions</div>
+          <div class="review-list">
+            ${wrongItems.map(r=>`
+              <div class="review-item">
+                <div class="q">${r.q}</div>
+                <div class="a-wrong">✗ Your answer: ${r.chosen}</div>
+                <div class="a-right">✓ Correct: ${r.right}</div>
+                <div class="src">Handbook chapter: ${r.src}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+      ` : `<div style="color: var(--success); font-size:1.05rem; font-weight:700; margin-bottom:10px;">Perfect score — no missed questions.</div>`}
+      <div class="nav-row" style="justify-content:center; margin-top:24px; gap:10px;">
+        <button class="btn ghost" onclick="restart()">Choose New Chapter</button>
+        <button class="btn" onclick="startQuiz(state.mode)">Retry This Set</button>
+      </div>
+    </div>
+  `;
+}
+
+render();
+</script>
+</body>
+</html>
